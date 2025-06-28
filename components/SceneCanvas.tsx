@@ -57,7 +57,7 @@ const NoisyTerrain: React.FC<{ terrainProps: TerrainProperties; onClick: (event:
     return (
         <mesh
             rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -0.01, 0]}
+            position={[0, -0.1, 0]}
             receiveShadow
             castShadow
             onClick={onClick}
