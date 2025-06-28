@@ -3,7 +3,7 @@ import type * as THREE from 'three'; // Import THREE namespace for Object3D
 import { LeftSidebar } from './components/LeftSidebar';
 import { RightSidebar } from './components/RightSidebar';
 import { SceneCanvas } from './components/SceneCanvas';
-import { PrimitiveType, type GizmoMode, type GlobalPropType, type LightProperties, type TerrainProperties } from './types'; 
+import { PrimitiveType, type GizmoMode, type GlobalPropType, type LightProperties, type TerrainProperties, type SkyProperties } from './types'; 
 import type { SceneObjectType, ObjectProperties, PrimitiveSceneObject, ModelSceneObject } from './types';
 import { DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE } from './constants';
 
@@ -21,6 +21,7 @@ const getPrimitiveNameInPortuguese = (type: PrimitiveType): string => {
   }
 };
 
+const GROUND_Y_OFFSET = 0.01; // Small offset to prevent z-fighting with the terrain
 
 const App: React.FC = () => {
   const [sceneObjects, setSceneObjects] = useState<SceneObjectType[]>([]);
@@ -39,6 +40,13 @@ const App: React.FC = () => {
     color: '#6B8E23',
     noiseStrength: 0,
     noiseScale: 20,
+  });
+  
+  const [skyProps, setSkyProps] = useState<SkyProperties>({
+    turbidity: 8,
+    rayleigh: 1.5,
+    inclination: 0.3,
+    azimuth: 0.35,
   });
 
   const getNextName = useCallback((baseName: string): string => {
@@ -68,9 +76,9 @@ const App: React.FC = () => {
     };
     
     if (type === PrimitiveType.BOX || type === PrimitiveType.CYLINDER || type === PrimitiveType.PYRAMID) {
-        newObject.position[1] = newObject.scale[1] / 2;
+        newObject.position[1] = (newObject.scale[1] / 2) + GROUND_Y_OFFSET;
     } else if (type === PrimitiveType.SPHERE) {
-        newObject.position[1] = newObject.scale[1] * 0.5;
+        newObject.position[1] = (newObject.scale[1] * 0.5) + GROUND_Y_OFFSET;
     }
 
     setSceneObjects((prevObjects) => [...prevObjects, newObject]);
@@ -90,7 +98,8 @@ const App: React.FC = () => {
       color: undefined, 
       opacity: 1, 
     };
-    newObject.position[1] = newObject.scale[1] * 0.5; 
+    // This assumes model's origin is at its center and it has a height of 1 unit before scaling.
+    newObject.position[1] = (newObject.scale[1] * 0.5) + GROUND_Y_OFFSET; 
     setSceneObjects((prevObjects) => [...prevObjects, newObject]);
   }, [getNextName]);
 
@@ -126,6 +135,10 @@ const App: React.FC = () => {
   
   const updateTerrainProperties = useCallback((newProps: Partial<TerrainProperties>) => {
     setTerrainProps(prev => ({ ...prev, ...newProps }));
+  }, []);
+  
+  const updateSkyProperties = useCallback((newProps: Partial<SkyProperties>) => {
+    setSkyProps(prev => ({ ...prev, ...newProps }));
   }, []);
 
 
@@ -170,6 +183,7 @@ const App: React.FC = () => {
         selectedObjectRef={selectedObjectRef}
         lightProps={lightProps}
         terrainProps={terrainProps}
+        skyProps={skyProps}
         onSelectObject={handleSelectObject}
         onDeselect={handleDeselect}
         onUpdateObjectProperties={updateObjectProperties}
@@ -180,9 +194,11 @@ const App: React.FC = () => {
         selectedGlobal={selectedGlobal}
         lightProps={lightProps}
         terrainProps={terrainProps}
+        skyProps={skyProps}
         onUpdateObject={updateObjectProperties} 
         onUpdateLight={updateLightProperties}
         onUpdateTerrain={updateTerrainProperties}
+        onUpdateSky={updateSkyProperties}
         currentGizmoMode={gizmoMode} 
         onSetGizmoMode={setGizmoMode} 
       />

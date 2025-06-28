@@ -21,7 +21,14 @@ export interface TerrainProperties {
   noiseScale: number;
 }
 
-export type GlobalPropType = 'light' | 'terrain';
+export interface SkyProperties {
+  turbidity: number;
+  rayleigh: number;
+  inclination: number;
+  azimuth: number;
+}
+
+export type GlobalPropType = 'light' | 'terrain' | 'sky';
 
 export interface ObjectProperties {
   position: Vector3Array;

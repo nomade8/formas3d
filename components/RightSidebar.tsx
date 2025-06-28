@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { SceneObjectType, ObjectProperties, EditableObjectProperties, GizmoMode, LightProperties, TerrainProperties, GlobalPropType, Vector3Array } from '../types';
+import type { SceneObjectType, ObjectProperties, EditableObjectProperties, GizmoMode, LightProperties, TerrainProperties, GlobalPropType, Vector3Array, SkyProperties } from '../types';
 import { parseFloatSafe } from '../utils/conversionUtils';
 
 interface RightSidebarProps {
@@ -7,9 +7,11 @@ interface RightSidebarProps {
   selectedGlobal: GlobalPropType | null;
   lightProps: LightProperties;
   terrainProps: TerrainProperties;
+  skyProps: SkyProperties;
   onUpdateObject: (id: string, newProps: Partial<ObjectProperties>) => void;
   onUpdateLight: (newProps: Partial<LightProperties>) => void;
   onUpdateTerrain: (newProps: Partial<TerrainProperties>) => void;
+  onUpdateSky: (newProps: Partial<SkyProperties>) => void;
   currentGizmoMode: GizmoMode;
   onSetGizmoMode: (mode: GizmoMode) => void;
 }
@@ -125,7 +127,7 @@ const ObjectEditor: React.FC<Pick<RightSidebarProps, 'selectedObject' | 'onUpdat
                 <div className="grid grid-cols-3 gap-2">
                     <GizmoModeButton label="Mover" mode="translate" currentMode={currentGizmoMode} onClick={onSetGizmoMode} />
                     <GizmoModeButton label="Rotacionar" mode="rotate" currentMode={currentGizmoMode} onClick={onSetGizmoMode} />
-                    <GizmoModeButton label="Escala" mode="scale" currentMode={currentGizmoMode} onClick={onSetGizmoMode} />
+                    <GizmoModeButton label="Escalar" mode="scale" currentMode={currentGizmoMode} onClick={onSetGizmoMode} />
                 </div>
             </div>
             <ColorInput label="Cor" value={editableProps.color || '#ffffff'} onChange={(val) => handlePropertyChange('color', val)} />
@@ -174,6 +176,42 @@ const TerrainEditor: React.FC<Pick<RightSidebarProps, 'terrainProps' | 'onUpdate
     );
 };
 
+const SkyEditor: React.FC<Pick<RightSidebarProps, 'skyProps' | 'onUpdateSky'>> = ({ skyProps, onUpdateSky }) => {
+    return (
+        <>
+            <h3 className="text-sm font-semibold mb-3 text-gray-400 uppercase tracking-wider">Propriedades do Céu</h3>
+             <RangeInput
+                label="Inclinação (Hora do Dia)"
+                value={String(skyProps.inclination)}
+                min="0" max="1" step="0.01"
+                onChange={(val) => onUpdateSky({ inclination: parseFloatSafe(val, 0) })}
+                displayValue={skyProps.inclination.toFixed(2)}
+            />
+            <RangeInput
+                label="Azimute (Direção do Sol)"
+                value={String(skyProps.azimuth)}
+                min="0" max="1" step="0.01"
+                onChange={(val) => onUpdateSky({ azimuth: parseFloatSafe(val, 0) })}
+                displayValue={skyProps.azimuth.toFixed(2)}
+            />
+            <RangeInput
+                label="Turbidez"
+                value={String(skyProps.turbidity)}
+                min="0" max="20" step="0.1"
+                onChange={(val) => onUpdateSky({ turbidity: parseFloatSafe(val, 0) })}
+                displayValue={skyProps.turbidity.toFixed(1)}
+            />
+            <RangeInput
+                label="Rayleigh"
+                value={String(skyProps.rayleigh)}
+                min="0" max="4" step="0.05"
+                onChange={(val) => onUpdateSky({ rayleigh: parseFloatSafe(val, 0) })}
+                displayValue={skyProps.rayleigh.toFixed(2)}
+            />
+        </>
+    );
+};
+
 export const RightSidebar: React.FC<RightSidebarProps> = (props) => {
     const { selectedObject, selectedGlobal } = props;
 
@@ -183,6 +221,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = (props) => {
         }
         if (selectedGlobal === 'terrain') {
             return <TerrainEditor {...props} />;
+        }
+        if (selectedGlobal === 'sky') {
+            return <SkyEditor {...props} />;
         }
         if (selectedObject) {
             return <ObjectEditor {...props} />;

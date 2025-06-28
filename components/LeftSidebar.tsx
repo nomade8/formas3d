@@ -1,6 +1,6 @@
 import React from 'react';
 import { PrimitiveType, GlobalPropType } from '../types';
-import { CubeIcon, CylinderIcon, SphereIcon, PyramidIcon, LightIcon, TerrainIcon } from './icons';
+import { CubeIcon, CylinderIcon, SphereIcon, PyramidIcon, LightIcon, TerrainIcon, SkyIcon } from './icons';
 
 interface LeftSidebarProps {
   onAddPrimitive: (type: PrimitiveType) => void;
@@ -53,12 +53,16 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onAddPrimitive, onSele
             <TerrainIcon className="w-10 h-10 mb-1 text-green-600" />
             Terreno
           </SidebarButton>
+           <SidebarButton onClick={() => onSelectGlobal('sky')} title="Editar Propriedades do Céu">
+            <SkyIcon className="w-10 h-10 mb-1 text-cyan-400" />
+            Céu
+          </SidebarButton>
         </div>
       </div>
        <div className="text-xs text-gray-500 mt-auto pt-4">
         <p>Dica: Clique nos objetos na cena para selecionar e movê-los com o gizmo.</p>
         <p>Use os controles do mouse para orbitar (arrastar-esquerdo), zoom (rolar) e pan (arrastar-direito).</p>
-        <p className="mt-4 text-gray-400">Desenvolvido por : Professor Marcelo Nunes e Gemini AI.</p>
+        <p className="mt-4 pt-4 border-t border-gray-700 leading-relaxed">Projeto desenvolvido por:<br/>Professor Marcelo Nunes e Gemini AI</p>
       </div>
     </div>
   );

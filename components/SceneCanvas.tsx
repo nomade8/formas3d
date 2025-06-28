@@ -1,8 +1,8 @@
 import React, { useRef, useCallback, Suspense, useEffect, useMemo } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Grid, TransformControls, GizmoHelper, GizmoViewcube, Sky } from '@react-three/drei';
+import { OrbitControls, TransformControls, GizmoHelper, GizmoViewcube, Sky } from '@react-three/drei';
 import * as THREE from 'three';
-import type { SceneObjectType, ObjectProperties, Vector3Array, GizmoMode, LightProperties, TerrainProperties } from '../types';
+import type { SceneObjectType, ObjectProperties, Vector3Array, GizmoMode, LightProperties, TerrainProperties, SkyProperties } from '../types';
 import { RenderableObject } from './RenderableObject';
 import { perlinNoise } from '../utils/noise';
 
@@ -12,6 +12,7 @@ interface SceneCanvasProps {
   selectedObjectRef: THREE.Object3D | null; 
   lightProps: LightProperties;
   terrainProps: TerrainProperties;
+  skyProps: SkyProperties;
   onSelectObject: (id: string, ref: THREE.Object3D) => void;
   onDeselect: () => void;
   onUpdateObjectProperties: (id: string, newProps: Partial<ObjectProperties>) => void;
@@ -27,7 +28,7 @@ const NoisyTerrain: React.FC<{ terrainProps: TerrainProperties; onClick: (event:
 
         if (noiseStrength === 0) {
             // Check if it's already flat to avoid unnecessary updates
-            if (pos.getZ(0) === 0) return;
+            if (pos.getZ(0) === 0 && pos.getZ(pos.count - 1) === 0) return;
             for (let i = 0; i < pos.count; i++) {
                 pos.setZ(i, 0);
             }
@@ -57,13 +58,13 @@ const NoisyTerrain: React.FC<{ terrainProps: TerrainProperties; onClick: (event:
     return (
         <mesh
             rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -0.1, 0]}
+            position={[0, 0, 0]}
             receiveShadow
             castShadow
             onClick={onClick}
             geometry={geometry}
         >
-            <meshStandardMaterial ref={materialRef} color={terrainProps.color} side={THREE.DoubleSide} />
+            <meshStandardMaterial ref={materialRef} color={terrainProps.color} />
         </mesh>
     );
 };
@@ -75,6 +76,7 @@ const SceneContent: React.FC<Omit<SceneCanvasProps, 'selectedObjectRef'> & { act
   activeGizmoTarget,
   lightProps,
   terrainProps,
+  skyProps,
   onSelectObject,
   onDeselect,
   onUpdateObjectProperties,
@@ -122,29 +124,18 @@ const SceneContent: React.FC<Omit<SceneCanvasProps, 'selectedObjectRef'> & { act
       
       <NoisyTerrain terrainProps={terrainProps} onClick={handleBackgroundClick} />
 
-      <Grid 
-        args={[100, 100]} 
-        cellSize={0.5} 
-        cellThickness={0.5} 
-        cellColor="#4A5568" // cinza-600
-        sectionSize={2.5} 
-        sectionThickness={1} 
-        sectionColor="#718096" // cinza-500
-        fadeDistance={100} 
-        fadeStrength={1} 
-        infiniteGrid 
-      />
+      {/* The Grid component has been removed to resolve visual artifacts and simplify the scene, 
+          ensuring only a single ground plane is rendered. */}
 
       {/* Enhanced Sky parameters for a more beautiful and realistic look */}
       <Sky 
-        distance={450000} 
-        sunPosition={sharedSunPosition}
-        inclination={0.3} // Sun moderately high, for clear day but not stark noon
-        azimuth={0.35}    // Sun in a slightly WSW direction, giving afternoon light
-        mieCoefficient={0.004} // Aerosol scattering
-        mieDirectionalG={0.75} // Sun disk appearance
-        rayleigh={1.5}     // Enhances scattering for richer sky colors
-        turbidity={8}      // Clear sky with slight atmospheric depth
+        distance={450000}
+        inclination={skyProps.inclination}
+        azimuth={skyProps.azimuth}
+        mieCoefficient={0.004}
+        mieDirectionalG={0.75}
+        rayleigh={skyProps.rayleigh}
+        turbidity={skyProps.turbidity}
       />
       
       {sceneObjects.map((obj) => (
@@ -182,6 +173,7 @@ export const SceneCanvas: React.FC<SceneCanvasProps> = (props) => {
       <Canvas
         shadows 
         camera={{ position: [5, 5, 5], fov: 50 }}
+        gl={{ logarithmicDepthBuffer: true }}
         onClick={(e) => e.stopPropagation()} 
       >
         <Suspense fallback={null}> 

@@ -57,3 +57,10 @@ export const TerrainIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <path d="M3,20L7.5,12L12,18L16,10L21,20H3Z" stroke="#000" strokeWidth="1" strokeLinejoin="round" />
   </svg>
 );
+
+export const SkyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+        <path d="M8 12.5C8 11.12 8.525 9.845 9.425 8.925C9.91426 8.42392 10.4853 8.01956 11.1111 7.73333C10.5 7.04167 9.61111 6.66667 8.5 6.66667C6.25 6.66667 4.5 8.41667 4.5 10.6667C4.5 12.9167 6.25 14.6667 8.5 14.6667C9.02778 14.6667 9.52778 14.5556 10 14.3333C9.08333 13.8889 8.5 13.25 8.5 12.5H8Z" stroke="#000" strokeWidth="1" fill="none"/>
+        <path d="M17.5 14.5C18.88 14.5 20 13.38 20 12C20 10.62 18.88 9.5 17.5 9.5C17.0722 9.5 16.6722 9.61111 16.3333 9.80556C15.9167 8.02778 14.3611 6.66667 12.5 6.66667C10.5 6.66667 8.80556 8.13889 8.58333 10.0278C7.11111 10.1944 6 11.4722 6 13C6 14.6389 7.36111 16 9 16H17C17.2778 16 17.5278 15.9167 17.75 15.75" stroke="#000" strokeWidth="1" fill="none" strokeLinejoin="round"/>
+    </svg>
+);
