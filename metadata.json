@@ -1,0 +1,6 @@
+{
+  "name": "Configurador de Cena 3D",
+  "description": "Uma aplicação React para construir e configurar cenas 3D usando React Three Fiber. Usuários podem adicionar formas primitivas e modelos pré-definidos, e então selecioná-los e transformá-los em um canvas 3D.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
