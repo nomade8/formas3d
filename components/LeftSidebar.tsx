@@ -58,6 +58,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onAddPrimitive, onSele
        <div className="text-xs text-gray-500 mt-auto pt-4">
         <p>Dica: Clique nos objetos na cena para selecionar e movê-los com o gizmo.</p>
         <p>Use os controles do mouse para orbitar (arrastar-esquerdo), zoom (rolar) e pan (arrastar-direito).</p>
+        <p className="mt-4 text-gray-400">Desenvolvido por : Professor Marcelo Nunes e Gemini AI.</p>
       </div>
     </div>
   );
