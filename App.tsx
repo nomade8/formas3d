@@ -39,13 +39,13 @@ const App: React.FC = () => {
   const [terrainProps, setTerrainProps] = useState<TerrainProperties>({
     color: '#6B8E23',
     noiseStrength: 0,
-    noiseScale: 20,
+    noiseScale: 0,
   });
   
   const [skyProps, setSkyProps] = useState<SkyProperties>({
-    turbidity: 8,
-    rayleigh: 1.5,
-    inclination: 0.3,
+    turbidity: 5.1,
+    rayleigh: 1.0,
+    inclination: 0.5,
     azimuth: 0.35,
   });
 
